@@ -1,25 +1,38 @@
-  import React from "react";
-import ContactUs from './Contactus';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import Navbar from "./Navbar";
+import {useEffect, useState} from "react"
 
-import Home from './Home';
+import ProductCart from "./productCard"
 
-import Cart from './Cart';
+import "./App.css"
 
+function App(){
+  const [products, setProducts] = useState([])
 
-const App = () => {
+  useEffect(()=>{
+      getProducts()
+  },[])
+
+  async function getProducts(){
+
+    let res = await fetch("https://fakestoreapi.com/products");
+
+    let productList = await res.json();
+
+    setProducts(productList)
+
+    console.log(productList)
+  }
+
+  if (products.length===0){
+      return(<h1>fetching...</h1>)
+  }
   return(
     <>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-            <Route path="/" exact element={<Home/>} />
-            <Route path="Cart" exact element={<Cart/>} />
-            <Route Path="Contact" exact element={<ContactUs />} />
-        </Routes>
-      </BrowserRouter>
+      <div className="product-list">
+      {
+        products.map((p)=> <ProductCart {...p} key={p.id}></ProductCart>)
+      }
+      </div>
     </>
-  )
+  ) 
 }
 export default App;
